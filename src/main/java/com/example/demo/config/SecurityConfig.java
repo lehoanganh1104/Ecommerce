@@ -49,12 +49,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
         httpSecurity.authorizeHttpRequests(request -> request
-                .requestMatchers("/api/authentication/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/users/create").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/product-images/**").permitAll()
-                .requestMatchers("/api/payments/webhook").permitAll()
+                .requestMatchers("/api/v1/authentication/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/users/create").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/product-images/**").permitAll()
+                .requestMatchers("/api/v1/payments/webhook").permitAll()
                 .anyRequest().authenticated()
 
         );

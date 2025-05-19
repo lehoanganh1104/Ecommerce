@@ -6,7 +6,8 @@ import com.example.demo.dto.request.UpdateUserRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.UserResponse;
 import com.example.demo.exception.AppException;
-import com.example.demo.service.UserService;
+import com.example.demo.service.IUserService;
+import com.example.demo.service.impl.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +20,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/users")
+@RequestMapping("api/v1/users")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
-    UserService userService;
+    IUserService userService;
 
     @PostMapping("/create")
     public ResponseEntity<?> createUser(@Valid @RequestBody CreateUserRequest request){

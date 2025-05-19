@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrException;
@@ -6,6 +6,7 @@ import com.example.demo.model.Order;
 import com.example.demo.model.Payment;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.PaymentRepository;
+import com.example.demo.service.IPaymentService;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import com.stripe.param.PaymentIntentCreateParams;
@@ -24,7 +25,7 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class PaymentService implements IPaymentService{
+public class PaymentService implements IPaymentService {
     OrderRepository orderRepository;
     PaymentRepository paymentRepository;
 

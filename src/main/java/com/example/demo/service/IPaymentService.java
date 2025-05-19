@@ -5,4 +5,5 @@ import com.stripe.model.PaymentIntent;
 
 public interface IPaymentService {
     PaymentIntent createPaymentIntent(Long orderId) throws StripeException;
+    void handlePaymentSucceeded(String paymentIntentId);
 }

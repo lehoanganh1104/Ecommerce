@@ -5,7 +5,7 @@ import com.example.demo.dto.request.UpdateOrderRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.OrderResponse;
 import com.example.demo.exception.AppException;
-import com.example.demo.service.OrderService;
+import com.example.demo.service.IOrderService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -16,11 +16,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/orders")
+@RequestMapping("api/v1/orders")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class OrderController {
-    OrderService orderService;
+    IOrderService orderService;
 
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<OrderResponse>> createOrder(@RequestBody CreateOrderRequest request) {

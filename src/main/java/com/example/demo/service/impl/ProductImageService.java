@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.dto.response.ProductImageResponse;
 import com.example.demo.exception.AppException;
@@ -8,6 +8,7 @@ import com.example.demo.model.Product;
 import com.example.demo.model.ProductImage;
 import com.example.demo.repository.ProductImageRepository;
 import com.example.demo.repository.ProductRepository;
+import com.example.demo.service.IProductImageService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class ProductImageService implements IProductImageService{
+public class ProductImageService implements IProductImageService {
     ProductRepository productRepository;
     ProductImageRepository productImageRepository;
     FileService fileService;

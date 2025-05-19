@@ -1,14 +1,13 @@
 package com.example.demo.controller;
 
 import com.example.demo.config.StripeConfig;
-import com.example.demo.dto.request.CreatePaymentRequest;
-import com.example.demo.service.PaymentService;
+import com.example.demo.service.IPaymentService;
+import com.example.demo.service.impl.PaymentService;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
 import com.stripe.model.PaymentIntent;
 import com.stripe.net.Webhook;
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -19,11 +18,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/payments")
+@RequestMapping("api/v1/payments")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PaymentController {
-    PaymentService paymentService;
+    IPaymentService paymentService;
     StripeConfig stripeConfig;
 
     @PostMapping("/create-payment-intent/{orderId}")

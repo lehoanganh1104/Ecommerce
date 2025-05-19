@@ -5,7 +5,8 @@ import com.example.demo.dto.request.UpdateCategoryRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.CategoryResponse;
 import com.example.demo.exception.AppException;
-import com.example.demo.service.CategoryService;
+import com.example.demo.service.ICategoryService;
+import com.example.demo.service.impl.CategoryService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +19,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/categories")
+@RequestMapping("api/v1/categories")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CategoryController {
-    CategoryService categoryService;
+    ICategoryService categoryService;
 
     @PostMapping("/create")
     public ResponseEntity<?> createCategory(@RequestBody @Valid CreateCategoryRequest request){
