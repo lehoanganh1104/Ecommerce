@@ -32,7 +32,7 @@ public class ProductImage {
     private LocalDateTime updatedAt;
 
     @Column(name = "deleted", nullable = false)
-    private boolean deleted = false;
+    private boolean deleted;
 
     @PrePersist
     protected void onCreate() {

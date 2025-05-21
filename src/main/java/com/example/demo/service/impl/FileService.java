@@ -3,11 +3,8 @@ package com.example.demo.service.impl;
 import com.example.demo.dto.response.UserResponse;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrException;
-import com.example.demo.mapper.IProductImageMapper;
 import com.example.demo.mapper.IUserMapper;
 import com.example.demo.model.User;
-import com.example.demo.repository.ProductImageRepository;
-import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -31,10 +28,7 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class FileService {
     UserRepository userRepository;
-    ProductRepository productRepository;
-    ProductImageRepository productImageRepository;
     IUserMapper userMapper;
-    IProductImageMapper productImageMapper;
 
     public boolean isImageFile(MultipartFile file) {
         String contentType = file.getContentType();

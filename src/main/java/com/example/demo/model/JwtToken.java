@@ -36,5 +36,5 @@ public class JwtToken {
     private Instant refreshTokenExpiredAt;
 
     @Column(name = "deleted")
-    private Boolean deleted = false;
+    private Boolean deleted;
 }

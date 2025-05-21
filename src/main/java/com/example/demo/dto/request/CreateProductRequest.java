@@ -1,6 +1,5 @@
 package com.example.demo.dto.request;
 
-import com.example.demo.model.Product;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

@@ -3,6 +3,7 @@ package com.example.demo.config;
 import com.example.demo.repository.JwtTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -16,7 +17,7 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
     private final JwtAuthenticationConverter delegateConverter;
 
     @Override
-    public AbstractAuthenticationToken convert(Jwt jwt) {
+    public AbstractAuthenticationToken convert(@NonNull Jwt jwt) {
         String tokenValue = jwt.getTokenValue();
         if (tokenValue == null || tokenValue.isEmpty()) {
             throw new BadCredentialsException("JWT token is missing.");

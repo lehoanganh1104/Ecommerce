@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.config.StripeConfig;
 import com.example.demo.service.IPaymentService;
-import com.example.demo.service.impl.PaymentService;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
