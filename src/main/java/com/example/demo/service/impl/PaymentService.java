@@ -32,12 +32,12 @@ public class PaymentService implements IPaymentService {
     @Override
     public PaymentIntent createPaymentIntent(Long orderId) throws StripeException {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new AppException(ErrException.ORDER_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrException.ORDER_NOT_FOUND));
 
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
         if (!order.getCustomer().getUserName().equals(currentUsername)) {
-            throw new AppException(ErrException.USER_INVALID_ROLE);
+            throw new AppException(ErrException.USER_ROLE_INVALID);
         }
 
         if (order.getPaymentStatus() == Order.PaymentStatus.PAID) {
@@ -71,7 +71,7 @@ public class PaymentService implements IPaymentService {
 
     public void handlePaymentSucceeded(String paymentIntentId) {
         Payment payment = paymentRepository.findByStripePaymentIntentId(paymentIntentId)
-                .orElseThrow(() -> new AppException(ErrException.PAYMENT_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrException.PAYMENT_NOT_FOUND));
 
         payment.setPaymentStatus(Payment.PaymentStatus.COMPLETED);
         payment.setPaymentDate(LocalDateTime.now());

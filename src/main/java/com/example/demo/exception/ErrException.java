@@ -8,62 +8,63 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public enum ErrException {
-    ERR_EXCEPTION(99, "Err exception"),
-    USER_EXISTED(101, "User existed"),
-    USER_NOT_EXISTED(102, "User does not exist"),
-    INVALID_USERNAME(103, "Username must be at least 3 characters"),
-    INVALID_PASSWORD(104, "Password must be at least 6 characters"),
-    PASSWORD_NOT_MATCH(105, "Password not match"),
-    INVALID_PHONE_NUMBER(106, "Phone number must be at least 10 characters"),
-    INVALID_EMAIL(107, "Email must be at least 10 characters"),
-    EMAIL_EXISTED(108, "Email is already used"),
-    PHONE_NUMBER_EXISTED(109, "Phone number is already used"),
-    USER_INVALID_ROLE(110, "User role is invalid"),
-    USER_NOT_SHIPPER(111, "User is not a shipper"),
-    INVALID_KEY(112, "Invalid message key err"),
+    // General errors (1000–1099)
+    ERR_EXCEPTION(1000, "Unexpected error occurred"),
+    INVALID_KEY(1001, "Invalid message key"),
+    STRIPE_INTEGRATION_ERROR(1002, "Stripe integration error"),
+    TOKEN_NOT_FOUND(1003, "Token not found"),
 
-    // Category errors
-    CATEGORY_EXISTED(201, "Category name already exists"),
-    CATEGORY_NOT_EXISTED(202, "Category not found"),
-    CATEGORY_INVALID_NAME(203, "Category name must not be blank"),
-    CATEGORY_NAME_TOO_SHORT(204, "Category name must be at least 3 characters"),
+    // User errors (1100–1199)
+    USER_ALREADY_EXISTS(1100, "User already exists"),
+    USER_NOT_FOUND(1101, "User not found"),
+    USERNAME_TOO_SHORT(1102, "Username must be at least 3 characters"),
+    PASSWORD_TOO_SHORT(1103, "Password must be at least 6 characters"),
+    PASSWORD_NOT_MATCH(1104, "Passwords do not match"),
+    PHONE_NUMBER_TOO_SHORT(1105, "Phone number must be at least 10 characters"),
+    EMAIL_TOO_SHORT(1106, "Email must be at least 10 characters"),
+    EMAIL_ALREADY_USED(1107, "Email is already used"),
+    PHONE_NUMBER_ALREADY_USED(1108, "Phone number is already used"),
+    USER_ROLE_INVALID(1109, "User role is invalid"),
+    USER_NOT_SHIPPER(1110, "User is not a shipper"),
 
-    // Product errors
-    PRODUCT_EXISTED(301, "Product name already exists"),
-    PRODUCT_NOT_EXISTED(302, "Product does not exist"),
-    PRODUCT_INVALID_NAME(303, "Product name must not be blank"),
-    PRODUCT_INVALID_PRICE(304, "Product price must be greater than zero"),
-    PRODUCT_INVALID_STOCK(305, "Product stock quantity cannot be negative"),
-    PRODUCT_CATEGORY_NOT_FOUND(306, "Category not found for product"),
-    PRODUCT_SELLER_NOT_FOUND(307, "Seller not found for product"),
-    INVALID_QUANTITY(308, "Invalid quantity for product"),
-    PRODUCT_OUT_OF_STOCK(309, "Product is out of stock"),
-    PRODUCT_IMAGE_NOT_EXISTED(310,"Product image not exist"),
+    // Category errors (1200–1299)
+    CATEGORY_ALREADY_EXISTS(1200, "Category name already exists"),
+    CATEGORY_NOT_FOUND(1201, "Category not found"),
+    CATEGORY_NAME_BLANK(1202, "Category name must not be blank"),
+    CATEGORY_NAME_TOO_SHORT(1203, "Category name must be at least 3 characters"),
 
-    // Order errors
-    ORDER_NOT_EXISTED(401, "Order does not exist"),
-    ORDER_STATUS_INVALID(402, "Invalid order status"),
-    ORDER_ALREADY_PAID(403, "Order already paid"),
-    ORDER_ID_NULL(404, "OrderId null"),
-    ORDER_ALREADY_HAVE_SHIPPER(405,"Order already assigned to another shipper"),
+    // Product errors (1300–1399)
+    PRODUCT_ALREADY_EXISTS(1300, "Product name already exists"),
+    PRODUCT_NOT_FOUND(1301, "Product not found"),
+    PRODUCT_NAME_BLANK(1302, "Product name must not be blank"),
+    PRODUCT_PRICE_INVALID(1303, "Product price must be greater than zero"),
+    PRODUCT_STOCK_INVALID(1304, "Product stock quantity cannot be negative"),
+    PRODUCT_CATEGORY_NOT_FOUND(1305, "Category not found for product"),
+    PRODUCT_SELLER_NOT_FOUND(1306, "Seller not found for product"),
+    PRODUCT_QUANTITY_INVALID(1307, "Invalid quantity for product"),
+    PRODUCT_OUT_OF_STOCK(1308, "Product is out of stock"),
+    PRODUCT_IMAGE_NOT_FOUND(1309, "Product image not found"),
 
-    // Payment erors
-    PAYMENT_NOT_EXISTED(401, "Order does not exist"),
-    PAYMENT_PROCESSING_ERROR(402, "Payment processing error"),
-    PAYMENT_NOT_COMPLETED(403, "Payment not complete"),
-    PAYMENT_INTENT_ID_NULL(404,"PaymentIntentId null"),
+    // Order errors (1400–1499)
+    ORDER_NOT_FOUND(1400, "Order not found"),
+    ORDER_STATUS_INVALID(1401, "Invalid order status"),
+    ORDER_ALREADY_PAID(1402, "Order has already been paid"),
+    ORDER_ID_NULL(1403, "Order ID must not be null"),
+    ORDER_ALREADY_ASSIGNED_SHIPPER(1404, "Order already assigned to another shipper"),
 
-    // File
-    NOT_FILE(405, "Not file"),
-    DIRECTORY_CREATION_FAILED(406,"Directory create fail"),
-    FILE_STORE_FAILED(407, "File store fail"),
-    STRIPE_INTEGRATION_ERROR(98, "Stripe Err"),
+    // Payment errors (1500–1599)
+    PAYMENT_NOT_FOUND(1500, "Payment not found"),
+    PAYMENT_PROCESSING_FAILED(1501, "Payment processing failed"),
+    PAYMENT_NOT_COMPLETED(1502, "Payment not completed"),
+    PAYMENT_INTENT_ID_NULL(1503, "PaymentIntent ID must not be null"),
 
+    // File errors (1600–1699)
+    FILE_NOT_PROVIDED(1600, "No file provided"),
+    DIRECTORY_CREATION_FAILED(1601, "Failed to create directory"),
+    FILE_STORE_FAILED(1602, "Failed to store file"),
 
-
-
-
-
+    // Token errors (1700–1799)
+    TOKEN_INVALID(1700, "Invalid token");
 ;
     private int code;
     private String message;

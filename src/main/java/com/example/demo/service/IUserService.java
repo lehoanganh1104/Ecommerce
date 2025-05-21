@@ -6,11 +6,13 @@ import com.example.demo.dto.request.UpdateUserRequest;
 import com.example.demo.dto.response.UserResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface IUserService {
     UserResponse createUser(CreateUserRequest request);
     UserResponse updateUser(Long id, UpdateUserRequest request);
     UserResponse updateUserRole(Long userId, UpdateRoleRequest request);
+    UserResponse uploadUserImage(Long userId, MultipartFile file);
     Page<UserResponse> getAllUser(String search, Pageable pageable);
     void deleteUser(Long id);
     UserResponse getUserById(Long id);

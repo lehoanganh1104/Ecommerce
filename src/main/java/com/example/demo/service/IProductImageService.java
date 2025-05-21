@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface IProductImageService {
-    ProductImageResponse createProductImage(Long productId, MultipartFile file);
+    ProductImageResponse uploadProductImage(Long productId, MultipartFile file);
     ProductImageResponse getProductImageById(Long id);
     Page<ProductImageResponse> getAllProductImages(Pageable pageable);
     void deleteProductImage(Long id);

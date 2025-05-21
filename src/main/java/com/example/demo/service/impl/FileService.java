@@ -43,7 +43,7 @@ public class FileService {
 
     public String storeImage(MultipartFile file, String subDirectory) {
         if (!isImageFile(file) || file.getOriginalFilename() == null) {
-            throw new AppException(ErrException.NOT_FILE);
+            throw new AppException(ErrException.FILE_NOT_PROVIDED);
         }
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         String uniqueFileName = UUID.randomUUID() + "_"  + fileName;
@@ -51,7 +51,7 @@ public class FileService {
         if (!Files.exists(uploadDir)) {
             try{
                 Files.createDirectories(uploadDir);
-                System.out.println("Đã tạo thư mục: " + uploadDir.toAbsolutePath()); // In ra thư mục
+                System.out.println("Đã tạo thư mục: " + uploadDir.toAbsolutePath());
             } catch (IOException e){
                 throw new AppException(ErrException.DIRECTORY_CREATION_FAILED);
             }
@@ -72,7 +72,7 @@ public class FileService {
         String userName = authentication.getName();
 
         User user = userRepository.findByUserNameAndDeletedFalse(userName)
-                .orElseThrow(()-> new AppException(ErrException.USER_NOT_EXISTED));
+                .orElseThrow(()-> new AppException(ErrException.USER_NOT_FOUND));
         String fileName = storeImage(file, "userImage");
         user.setImageUrl(fileName);
         User savedUser = userRepository.save(user);

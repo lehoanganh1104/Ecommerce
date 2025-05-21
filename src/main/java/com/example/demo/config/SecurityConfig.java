@@ -1,5 +1,6 @@
 package com.example.demo.config;
 
+import com.example.demo.repository.JwtTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,7 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
     private final JwtProperties jwtProperties;
+    private final JwtTokenRepository jwtTokenRepository;
 
     @Bean
     PasswordEncoder passwordEncoder(){
@@ -47,36 +49,46 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
-        httpSecurity.authorizeHttpRequests(request -> request
-                .requestMatchers("/api/v1/authentication/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/v1/users/create").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/product-images/**").permitAll()
-                .requestMatchers("/api/v1/payments/webhook").permitAll()
-                .anyRequest().authenticated()
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers("/api/v1/authentication/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users/create").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/product-images/**").permitAll()
+                        .requestMatchers("/api/v1/payments/webhook").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwtConfigurer -> jwtConfigurer
+                                .decoder(jwtDecoder())
+                                .jwtAuthenticationConverter(customJwtAuthenticationConverter())
+                        )
+                )
+                .csrf(AbstractHttpConfigurer::disable);
 
-        );
-        httpSecurity.oauth2ResourceServer(request ->
-                request.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())));
-        httpSecurity.csrf(AbstractHttpConfigurer::disable);
         return httpSecurity.build();
     }
 
     @Bean
     JwtDecoder jwtDecoder(){
-        SecretKeySpec secretKeySpec = new SecretKeySpec(jwtProperties.getAccessKey().getBytes(), "HS256");
+        SecretKeySpec secretKeySpec = new SecretKeySpec(jwtProperties.getSecretKey().getBytes(), "HmacSHA256");
         return NimbusJwtDecoder.withSecretKey(secretKeySpec).macAlgorithm(MacAlgorithm.HS256)
                 .build();
     }
 
     @Bean
-    JwtAuthenticationConverter jwtAuthenticationConverter(){
+    public JwtAuthenticationConverter defaultJwtAuthenticationConverter(){
         JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
         converter.setAuthorityPrefix("ROLE_");
-        JwtAuthenticationConverter converter1 = new JwtAuthenticationConverter();
-        converter1.setJwtGrantedAuthoritiesConverter(converter);
-        return converter1;
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(converter);
+        return jwtAuthenticationConverter;
+    }
+
+    @Bean
+    public CustomJwtAuthenticationConverter customJwtAuthenticationConverter() {
+        return new CustomJwtAuthenticationConverter(jwtTokenRepository, defaultJwtAuthenticationConverter());
     }
 }

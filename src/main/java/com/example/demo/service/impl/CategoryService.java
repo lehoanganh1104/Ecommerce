@@ -28,7 +28,7 @@ public class CategoryService implements ICategoryService {
     @PreAuthorize("hasRole('ADMIN') or hasRole('SELLER')")
     public CategoryResponse createCategory(CreateCategoryRequest request) {
         if (categoryRepository.existsByNameIgnoreCaseAndDeletedFalse(request.getName())){
-            throw new AppException(ErrException.CATEGORY_EXISTED);
+            throw new AppException(ErrException.CATEGORY_ALREADY_EXISTS);
         }
 
         Category category = categoryMapper.toCategory(request);
@@ -39,11 +39,11 @@ public class CategoryService implements ICategoryService {
     @PreAuthorize("hasRole('ADMIN') or hasRole('SELLER')")
     public CategoryResponse updateCategory(Long id, UpdateCategoryRequest request) {
         Category category = categoryRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(() -> new AppException(ErrException.CATEGORY_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrException.CATEGORY_NOT_FOUND));
 
         if (categoryRepository.existsByNameIgnoreCaseAndDeletedFalse(request.getName())
                 && !category.getName().equalsIgnoreCase(request.getName())) {
-            throw new AppException(ErrException.CATEGORY_EXISTED);
+            throw new AppException(ErrException.CATEGORY_ALREADY_EXISTS);
         }
 
         category.setName(request.getName());
@@ -68,7 +68,7 @@ public class CategoryService implements ICategoryService {
     @PreAuthorize("hasRole('ADMIN') or hasRole('SELLER')")
     public void deleteCategory(Long id) {
         Category category = categoryRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(() -> new AppException(ErrException.CATEGORY_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrException.CATEGORY_NOT_FOUND));
         category.setDeleted(true);
         categoryRepository.save(category);
     }

@@ -1,12 +1,11 @@
 package com.example.demo.controller;
 
+import com.example.demo.constants.SuccessMessage;
 import com.example.demo.dto.request.CreateCategoryRequest;
 import com.example.demo.dto.request.UpdateCategoryRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.CategoryResponse;
-import com.example.demo.exception.AppException;
 import com.example.demo.service.ICategoryService;
-import com.example.demo.service.impl.CategoryService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,58 +26,57 @@ public class CategoryController {
     ICategoryService categoryService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createCategory(@RequestBody @Valid CreateCategoryRequest request){
-        try {
-            CategoryResponse response = categoryService.createCategory(request);
-            ApiResponse<CategoryResponse> apiResponse = ApiResponse.success(response);
-            return ResponseEntity.ok(apiResponse);
-        } catch (AppException ex) {
-            ApiResponse<?> apiResponse = ApiResponse.error(ex.getErrException().getCode(), ex.getErrException().getMessage());
-            return ResponseEntity.badRequest().body(apiResponse);
-        }
+    public ResponseEntity<ApiResponse<CategoryResponse>> createCategory(@RequestBody @Valid CreateCategoryRequest request){
+        CategoryResponse response = categoryService.createCategory(request);
+        return ResponseEntity.ok(ApiResponse.<CategoryResponse>builder()
+                .status(HttpStatus.CREATED.value())
+                .message(SuccessMessage.CATEGORY_CREATED)
+                .data(response)
+                .build()
+        );
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllCategories(
+    public ResponseEntity<ApiResponse<Page<CategoryResponse>>> getAllCategories(
             @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String direction) {
-        try {
-            Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-            Pageable pageable = PageRequest.of(page, size, sort);
-            Page<CategoryResponse> response = categoryService.getAllCategories(search, pageable);
-            ApiResponse<Page<CategoryResponse>> apiResponse = ApiResponse.success(response);
-            return ResponseEntity.ok(apiResponse);
-        } catch (AppException ex) {
-            ApiResponse<?> apiResponse = ApiResponse.error(ex.getErrException().getCode(), ex.getErrException().getMessage());
-            return ResponseEntity.badRequest().body(apiResponse);
-        }
+
+        Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<CategoryResponse> response = categoryService.getAllCategories(search, pageable);
+        return ResponseEntity.ok(ApiResponse.<Page<CategoryResponse>>builder()
+                .status(HttpStatus.OK.value())
+                .message(SuccessMessage.CATEGORIES_FETCHED)
+                .data(response)
+                .build()
+        );
     }
 
     @PutMapping("update/{id}")
-    public ResponseEntity<?> updateCategory(
+    public ResponseEntity<ApiResponse<CategoryResponse>> updateCategory(
             @PathVariable Long id,
             @Valid @RequestBody UpdateCategoryRequest request) {
-        try {
-            CategoryResponse response = categoryService.updateCategory(id, request);
-            ApiResponse<CategoryResponse> apiResponse = ApiResponse.success(response);
-            return ResponseEntity.ok(apiResponse);
-        } catch (AppException ex) {
-            ApiResponse<?> apiResponse = ApiResponse.error(ex.getErrException().getCode(), ex.getErrException().getMessage());
-            return ResponseEntity.badRequest().body(apiResponse);
-        }
+        CategoryResponse response = categoryService.updateCategory(id, request);
+        return ResponseEntity.ok(ApiResponse.<CategoryResponse>builder()
+                .status(HttpStatus.OK.value())
+                .message(SuccessMessage.CATEGORY_UPDATED)
+                .data(response)
+                .build()
+        );
     }
 
     @DeleteMapping("delete/{id}")
-    public ResponseEntity<?> deleteCategory(@PathVariable Long id) {
-        try {
-            categoryService.deleteCategory(id);
-            return ResponseEntity.ok(ApiResponse.success(null));
-        } catch (AppException ex) {
-            return ResponseEntity.badRequest().body(ApiResponse.error(ex.getErrException().getCode(), ex.getErrException().getMessage()));
-        }
+    public ResponseEntity<ApiResponse<Void>> deleteCategory(@PathVariable Long id) {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.ok(ApiResponse.<Void>builder()
+                .status(HttpStatus.OK.value())
+                .message(SuccessMessage.CATEGORY_DELETED)
+                .data(null)
+                .build()
+        );
     }
 
 

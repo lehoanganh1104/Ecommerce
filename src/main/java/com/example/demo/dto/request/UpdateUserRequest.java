@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class UpdateUserRequest {
     @Size(min = 10, message = "INVALID_EMAIL")
     private String email;
-    @Size(min = 6, message = "INVALID_PASSWORD")
+    @Size(min = 6, max = 72, message = "INVALID_PASSWORD")
     private String password;
     private String fullName;
     @Size(min = 10, message = "INVALID_PHONE_NUMBER")

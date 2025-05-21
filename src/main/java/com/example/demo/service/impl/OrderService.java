@@ -48,7 +48,7 @@ public class OrderService implements IOrderService {
         String username = authentication.getName();
 
         User customer = userRepository.findByUserNameAndDeletedFalse(username)
-                .orElseThrow(() -> new AppException(ErrException.USER_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrException.USER_NOT_FOUND));
 
         Order order = new Order();
         order.setCustomer(customer);
@@ -61,10 +61,10 @@ public class OrderService implements IOrderService {
 
         for (CreateOrderRequest.OrderDetailRequest item : request.getItems()) {
             Product product = productRepository.findByIdAndDeletedFalse(item.getProductId())
-                    .orElseThrow(() -> new AppException(ErrException.PRODUCT_NOT_EXISTED));
+                    .orElseThrow(() -> new AppException(ErrException.PRODUCT_NOT_FOUND));
 
             if (item.getQuantity() <= 0) {
-                throw new AppException(ErrException.INVALID_QUANTITY);
+                throw new AppException(ErrException.PRODUCT_QUANTITY_INVALID);
             }
 
             if (product.getStockQuantity() < item.getQuantity()) {
@@ -94,7 +94,7 @@ public class OrderService implements IOrderService {
     @PreAuthorize("hasAnyRole('ADMIN', 'SELLER') or @orderSecurity.isOrderOwner(#id, authentication.name)")
     public OrderResponse getOrderById(Long id) {
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrException.ORDER_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrException.ORDER_NOT_FOUND));
         return orderMapper.toOrderResponse(order);
     }
 
@@ -123,10 +123,10 @@ public class OrderService implements IOrderService {
 
         for (UpdateOrderRequest.OrderDetailRequest item : request.getItems()) {
             Product product = productRepository.findByIdAndDeletedFalse(item.getProductId())
-                    .orElseThrow(() -> new AppException(ErrException.PRODUCT_NOT_EXISTED));
+                    .orElseThrow(() -> new AppException(ErrException.PRODUCT_NOT_FOUND));
 
             if (item.getQuantity() == null || item.getQuantity() <= 0) {
-                throw new AppException(ErrException.INVALID_QUANTITY);
+                throw new AppException(ErrException.PRODUCT_QUANTITY_INVALID);
             }
 
             if (product.getStockQuantity() < item.getQuantity()) {
@@ -196,7 +196,7 @@ public class OrderService implements IOrderService {
         }
 
         if (order.getShipper() != null && !order.getShipper().getId().equals(shipper.getId())) {
-            throw new AppException(ErrException.ORDER_ALREADY_HAVE_SHIPPER);
+            throw new AppException(ErrException.ORDER_ALREADY_ASSIGNED_SHIPPER);
         }
 
         if (order.getShipper() == null) {
@@ -272,12 +272,12 @@ public class OrderService implements IOrderService {
 
     private Order getOrderOrThrow(Long orderId) {
         return orderRepository.findById(orderId)
-                .orElseThrow(() -> new AppException(ErrException.ORDER_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrException.ORDER_NOT_FOUND));
     }
 
     private User getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUserNameAndDeletedFalse(username)
-                .orElseThrow(() -> new AppException(ErrException.USER_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrException.USER_NOT_FOUND));
     }
 }

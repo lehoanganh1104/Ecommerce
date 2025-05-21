@@ -15,35 +15,36 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService implements IUserService {
     UserRepository userRepository;
+    FileService fileService;
     IUserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
     @Override
     public UserResponse createUser(CreateUserRequest request) {
         if (userRepository.existsByUserNameIgnoreCaseAndDeletedFalse(request.getUserName())) {
-            throw new AppException(ErrException.USER_EXISTED);
+            throw new AppException(ErrException.USER_ALREADY_EXISTS);
         }
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new AppException(ErrException.EMAIL_EXISTED);
+            throw new AppException(ErrException.EMAIL_ALREADY_USED);
         }
 
         if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
-            throw new AppException(ErrException.PHONE_NUMBER_EXISTED);
+            throw new AppException(ErrException.PHONE_NUMBER_ALREADY_USED);
         }
 
         if (userRepository.existsByUserNameIgnoreCaseAndDeletedFalse(request.getUserName())){
-            throw new AppException(ErrException.USER_EXISTED);
+            throw new AppException(ErrException.USER_ALREADY_EXISTS);
         }
 
         User user = userMapper.toUser(request);
@@ -52,16 +53,16 @@ public class UserService implements IUserService {
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
-    @PostAuthorize("returnObject.userName == authentication.name or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("returnObject.userName == authentication.name or hasRole('ROLE_ADMIN')")
     @Override
     public UserResponse updateUser(Long id, UpdateUserRequest request) {
         User user = userRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(() -> new AppException(ErrException.USER_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrException.USER_NOT_FOUND));
 
         if (!request.getEmail().equals(user.getEmail())) {
             boolean existsEmail = userRepository.existsByEmailAndDeletedFalse(request.getEmail());
             if (existsEmail) {
-                throw new AppException(ErrException.EMAIL_EXISTED);
+                throw new AppException(ErrException.EMAIL_ALREADY_USED);
             }
             user.setEmail(request.getEmail());
         }
@@ -69,7 +70,7 @@ public class UserService implements IUserService {
         if (!request.getPhoneNumber().equals(user.getPhoneNumber())) {
             boolean existsPhone = userRepository.existsByPhoneNumberAndDeletedFalse(request.getPhoneNumber());
             if (existsPhone) {
-                throw new AppException(ErrException. PHONE_NUMBER_EXISTED);
+                throw new AppException(ErrException. PHONE_NUMBER_ALREADY_USED);
             }
             user.setPhoneNumber(request.getPhoneNumber());
         }
@@ -87,7 +88,7 @@ public class UserService implements IUserService {
     @PreAuthorize("hasRole('ADMIN')")
     public UserResponse updateUserRole(Long userId, UpdateRoleRequest request) {
         User user = userRepository.findByIdAndDeletedFalse(userId)
-                .orElseThrow(() -> new AppException(ErrException.USER_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrException.USER_NOT_FOUND));
 
         user.setRole(request.getRole());
 
@@ -109,11 +110,24 @@ public class UserService implements IUserService {
         return users.map(userMapper::toUserResponse);
     }
 
-    @PostAuthorize("returnObject.userName == authentication.name or hasRole('ROLE_ADMIN')")
+    @Override
+    @PreAuthorize("returnObject.userName == authentication.name or hasRole('ROLE_ADMIN')")
+    public UserResponse uploadUserImage(Long userId, MultipartFile file) {
+        User user = userRepository.findByIdAndDeletedFalse(userId)
+                .orElseThrow(() -> new AppException(ErrException.USER_NOT_FOUND));
+
+        String imageUrl = fileService.storeImage(file, "users");
+        user.setImageUrl(imageUrl);
+        userRepository.save(user);
+
+        return userMapper.toUserResponse(user);
+    }
+
+    @PreAuthorize("returnObject.userName == authentication.name or hasRole('ROLE_ADMIN')")
     @Override
     public UserResponse getUserById(Long id) {
         User user = userRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(() -> new AppException(ErrException.USER_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrException.USER_NOT_FOUND));
         return userMapper.toUserResponse(user);
     }
 
@@ -121,7 +135,7 @@ public class UserService implements IUserService {
     @Override
     public void deleteUser(Long id) {
         User user = userRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(() -> new AppException(ErrException.USER_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrException.USER_NOT_FOUND));
 
         user.setDeleted(true);
         userRepository.save(user);

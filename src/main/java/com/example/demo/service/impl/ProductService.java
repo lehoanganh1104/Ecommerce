@@ -31,7 +31,7 @@ public class ProductService implements IProductService {
     @PreAuthorize("hasAnyRole('ADMIN', 'SELLER')")
     public ProductResponse createProduct(CreateProductRequest request) {
         if (productRepository.existsByNameIgnoreCaseAndDeletedFalse(request.getName())){
-            throw new AppException(ErrException.PRODUCT_EXISTED);
+            throw new AppException(ErrException.PRODUCT_ALREADY_EXISTS);
         }
 
         Category category = categoryRepository.findById(request.getCategoryId())
@@ -48,11 +48,11 @@ public class ProductService implements IProductService {
     @PreAuthorize("hasAnyRole('ADMIN', 'SELLER')")
     public ProductResponse updateProduct(Long id, UpdateProductRequest request) {
         Product product = productRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(() -> new AppException(ErrException.PRODUCT_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrException.PRODUCT_NOT_FOUND));
 
         if (productRepository.existsByNameIgnoreCaseAndDeletedFalse(request.getName())
                 && !product.getName().equalsIgnoreCase(request.getName())) {
-            throw new AppException(ErrException.PRODUCT_EXISTED);
+            throw new AppException(ErrException.PRODUCT_ALREADY_EXISTS);
         }
 
         product.setName(request.getName());
@@ -83,11 +83,26 @@ public class ProductService implements IProductService {
         return products.map(productMapper::toProductResponse);
     }
 
+    @Override
+    public Page<ProductResponse> getProductByCategoryId(Long categoryId, Pageable pageable) {
+        categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new AppException(ErrException.CATEGORY_NOT_FOUND));
+        Page<Product> products= productRepository.findByCategoryId(categoryId, pageable);
+        return products.map(productMapper::toProductResponse);
+    }
+
+    @Override
+    public ProductResponse getProductById(Long id) {
+        Product product = productRepository.findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new AppException(ErrException.PRODUCT_NOT_FOUND));
+        return productMapper.toProductResponse(product);
+    }
+
     @PreAuthorize("hasAnyRole('ADMIN', 'SELLER')")
     @Override
     public void deleteProduct(Long id) {
         Product product = productRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(() -> new AppException(ErrException.PRODUCT_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrException.PRODUCT_NOT_FOUND));
         product.setDeleted(true);
         productRepository.save(product);
     }

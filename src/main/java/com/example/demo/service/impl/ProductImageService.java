@@ -29,16 +29,17 @@ public class ProductImageService implements IProductImageService {
 
     @Override
     @PreAuthorize("hasAnyRole('ADMIN', 'SELLER')")
-    public ProductImageResponse createProductImage(Long productId, MultipartFile file) {
+    public ProductImageResponse uploadProductImage(Long productId, MultipartFile file) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new AppException(ErrException.PRODUCT_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrException.PRODUCT_NOT_FOUND));
 
         String fileName = fileService.storeImage(file, "products");
 
-        ProductImage productImage = new ProductImage();
-        productImage.setProduct(product);
-        productImage.setImageUrl(fileName);
-        productImage.setDeleted(false);
+        ProductImage productImage = ProductImage.builder()
+                .product(product)
+                .imageUrl(fileName)
+                .deleted(false)
+                .build();
 
         ProductImage savedImage = productImageRepository.save(productImage);
 
@@ -48,7 +49,7 @@ public class ProductImageService implements IProductImageService {
     @Override
     public ProductImageResponse getProductImageById(Long id) {
         ProductImage productImage = productImageRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrException.PRODUCT_IMAGE_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrException.PRODUCT_IMAGE_NOT_FOUND));
         return productImageMapper.toProductImageResponse(productImage);
     }
 
@@ -62,7 +63,7 @@ public class ProductImageService implements IProductImageService {
     @PreAuthorize("hasAnyRole('ADMIN', 'SELLER')")
     public void deleteProductImage(Long id) {
         ProductImage productImage = productImageRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrException.PRODUCT_IMAGE_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrException.PRODUCT_IMAGE_NOT_FOUND));
         productImage.setDeleted(true);
         productImageRepository.save(productImage);
     }
