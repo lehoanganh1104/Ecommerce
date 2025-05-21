@@ -43,10 +43,8 @@ public class SuccessMessage {
     public static final String PAYMENT_FETCHED = "Payment fetched successfully";
 
     // File
-    public static final String FILE_UPLOADED = "File uploaded successfully";
-    public static final String FILE_DELETED = "File deleted successfully";
-    public static final String FILES_FETCHED = "Files fetched successfully";
-    public static final String FILE_FETCHED = "File fetched successfully";
+    public static final String PRODUCT_IMAGE_UPLOADED = "Product image uploaded successfully";
+    public static final String USER_IMAGE_UPLOADED = "User image uploaded successfully";
 
     // Token
     public static final String TOKEN_CREATED = "Token created successfully";

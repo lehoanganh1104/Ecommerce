@@ -47,7 +47,7 @@ public class OrderService implements IOrderService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        User customer = userRepository.findByUserNameAndDeletedFalse(username)
+        User customer = userRepository.findByUsernameAndDeletedFalse(username)
                 .orElseThrow(() -> new AppException(ErrException.USER_NOT_FOUND));
 
         Order order = new Order();
@@ -277,7 +277,7 @@ public class OrderService implements IOrderService {
 
     private User getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByUserNameAndDeletedFalse(username)
+        return userRepository.findByUsernameAndDeletedFalse(username)
                 .orElseThrow(() -> new AppException(ErrException.USER_NOT_FOUND));
     }
 }

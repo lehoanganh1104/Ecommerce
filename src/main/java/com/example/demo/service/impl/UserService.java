@@ -16,6 +16,8 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,7 +33,7 @@ public class UserService implements IUserService {
 
     @Override
     public UserResponse createUser(CreateUserRequest request) {
-        if (userRepository.existsByUserNameIgnoreCaseAndDeletedFalse(request.getUserName())) {
+        if (userRepository.existsByUsernameIgnoreCaseAndDeletedFalse(request.getUsername())) {
             throw new AppException(ErrException.USER_ALREADY_EXISTS);
         }
 
@@ -43,7 +45,7 @@ public class UserService implements IUserService {
             throw new AppException(ErrException.PHONE_NUMBER_ALREADY_USED);
         }
 
-        if (userRepository.existsByUserNameIgnoreCaseAndDeletedFalse(request.getUserName())){
+        if (userRepository.existsByUsernameIgnoreCaseAndDeletedFalse(request.getUsername())){
             throw new AppException(ErrException.USER_ALREADY_EXISTS);
         }
 
@@ -105,30 +107,41 @@ public class UserService implements IUserService {
         if (search == null || search.isBlank()){
             users = userRepository.findAllByDeletedFalse(pageable);
         } else {
-            users = userRepository.findByUserNameContainingIgnoreCaseAndDeletedFalse(search, pageable);
+            users = userRepository.findByUsernameContainingIgnoreCaseAndDeletedFalse(search, pageable);
         }
         return users.map(userMapper::toUserResponse);
     }
-
-    @Override
-    @PreAuthorize("returnObject.userName == authentication.name or hasRole('ROLE_ADMIN')")
-    public UserResponse uploadUserImage(Long userId, MultipartFile file) {
-        User user = userRepository.findByIdAndDeletedFalse(userId)
-                .orElseThrow(() -> new AppException(ErrException.USER_NOT_FOUND));
-
-        String imageUrl = fileService.storeImage(file, "users");
-        user.setImageUrl(imageUrl);
-        userRepository.save(user);
-
-        return userMapper.toUserResponse(user);
-    }
-
+    
     @PreAuthorize("returnObject.userName == authentication.name or hasRole('ROLE_ADMIN')")
     @Override
     public UserResponse getUserById(Long id) {
         User user = userRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new AppException(ErrException.USER_NOT_FOUND));
         return userMapper.toUserResponse(user);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @Override
+    public UserResponse getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsernameIgnoreCaseAndDeletedFalse(username)
+                .orElseThrow(() -> new AppException(ErrException.USER_NOT_FOUND));
+
+        return userMapper.toUserResponse(user);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    public UserResponse uploadUserImage(MultipartFile file) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+
+        User user = userRepository.findByUsernameAndDeletedFalse(userName)
+                .orElseThrow(()-> new AppException(ErrException.USER_NOT_FOUND));
+        String newImage = fileService.replaceImage(user.getImageUrl(), file, "users");
+        user.setImageUrl(newImage);
+        User savedUser = userRepository.save(user);
+        return userMapper.toUserResponse(savedUser);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

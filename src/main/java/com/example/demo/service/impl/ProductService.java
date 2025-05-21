@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +27,7 @@ public class ProductService implements IProductService {
     ProductRepository productRepository;
     CategoryRepository categoryRepository;
     IProductMapper productMapper;
+    FileService fileService;
 
     @Override
     @PreAuthorize("hasAnyRole('ADMIN', 'SELLER')")
@@ -104,6 +106,17 @@ public class ProductService implements IProductService {
         Product product = productRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new AppException(ErrException.PRODUCT_NOT_FOUND));
         product.setDeleted(true);
+        productRepository.save(product);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'SELLER')")
+    public void uploadProductImage(Long productId, MultipartFile file) {
+        Product product = productRepository.findByIdAndDeletedFalse(productId)
+                .orElseThrow(() -> new AppException(ErrException.PRODUCT_NOT_FOUND));
+
+        String newImage = fileService.replaceImage(product.getImageUrl(), file, "products");
+        product.setImageUrl(newImage);
+
         productRepository.save(product);
     }
 }

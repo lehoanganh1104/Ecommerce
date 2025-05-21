@@ -35,7 +35,7 @@ public class AuthenticationService implements IAuthenticationService {
     JwtProperties jwtProperties;
 
     public AuthenticationResponse login(AuthenticationRequest authenticationRequest){
-        var user = userRepository.findByUserName(authenticationRequest.getUserName())
+        var user = userRepository.findByUsername(authenticationRequest.getUsername())
                 .orElseThrow(() -> new AppException(ErrException.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(authenticationRequest.getPassword(), user.getPassword())) {
@@ -126,7 +126,7 @@ public class AuthenticationService implements IAuthenticationService {
 
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
         JWTClaimsSet claims = new JWTClaimsSet.Builder()
-                .subject(user.getUserName())
+                .subject(user.getUsername())
                 .issuer(issuer)
                 .issueTime(new Date())
                 .expirationTime(Date.from(Instant.now().plusSeconds(expirationSeconds)))

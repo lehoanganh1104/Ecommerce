@@ -9,7 +9,7 @@ import lombok.*;
 
 public class CreateUserRequest {
     @Size(min = 3, message = "INVALID_USERNAME")
-    private String userName;
+    private String username;
     @Size(min = 10, message = "INVALID_EMAIL")
     private String email;
     @Size(min = 6, max = 72, message = "INVALID_PASSWORD")

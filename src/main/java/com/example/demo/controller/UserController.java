@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("api/v1/users")
@@ -66,6 +67,16 @@ public class UserController {
             );
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser() {
+        UserResponse response = userService.getCurrentUser();
+        return ResponseEntity.ok(ApiResponse.<UserResponse>builder()
+                .status(HttpStatus.OK.value())
+                .message(SuccessMessage.USER_FETCHED)
+                .data(response)
+                .build());
+    }
+
     @PutMapping("update/{id}")
     public ResponseEntity<ApiResponse<UserResponse>> updateUser(@PathVariable Long id, @Valid @RequestBody UpdateUserRequest request){
         UserResponse response = userService.updateUser(id, request);
@@ -88,6 +99,18 @@ public class UserController {
                 .data(response)
                 .build()
         );
+    }
+
+    @PostMapping("/upload-image")
+    public ResponseEntity<ApiResponse<Void>> uploadUserImage(@RequestParam("file") MultipartFile file) {
+
+        userService.uploadUserImage(file);
+
+        return ResponseEntity.ok(ApiResponse.<Void>builder()
+                .status(HttpStatus.OK.value())
+                .message(SuccessMessage.USER_IMAGE_UPLOADED)
+                .data(null)
+                .build());
     }
 
     @DeleteMapping("delete/{id}")

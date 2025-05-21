@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("api/v1/products")
@@ -46,6 +47,49 @@ public class ProductController {
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<ProductResponse> responses = productService.getAllProduct(search, pageable);
+        return ResponseEntity.ok(ApiResponse.<Page<ProductResponse>>builder()
+                .status(HttpStatus.OK.value())
+                .message(SuccessMessage.PRODUCTS_FETCHED)
+                .data(responses)
+                .build()
+        );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<ProductResponse>> getProductById(@PathVariable Long id) {
+        ProductResponse response = productService.getProductById(id);
+        return ResponseEntity.ok(ApiResponse.<ProductResponse>builder()
+                .status(HttpStatus.OK.value())
+                .message(SuccessMessage.PRODUCT_FETCHED)
+                .data(response)
+                .build()
+        );
+    }
+
+    @PostMapping("/upload-image/{productId}")
+    public ResponseEntity<ApiResponse<Void>> uploadProductImage(
+            @PathVariable Long productId,
+            @RequestParam("file") MultipartFile file) {
+
+        productService.uploadProductImage(productId, file);
+
+        return ResponseEntity.ok(ApiResponse.<Void>builder()
+                .status(HttpStatus.OK.value())
+                .message(SuccessMessage.PRODUCT_IMAGE_UPLOADED)
+                .data(null)
+                .build());
+    }
+
+    @GetMapping("/get-by-category/{categoryId}")
+    public ResponseEntity<ApiResponse<Page<ProductResponse>>> getProductsByCategoryId(
+            @PathVariable Long categoryId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+        Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<ProductResponse> responses = productService.getProductByCategoryId(categoryId, pageable);
         return ResponseEntity.ok(ApiResponse.<Page<ProductResponse>>builder()
                 .status(HttpStatus.OK.value())
                 .message(SuccessMessage.PRODUCTS_FETCHED)

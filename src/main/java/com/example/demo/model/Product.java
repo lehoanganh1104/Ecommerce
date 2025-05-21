@@ -32,6 +32,9 @@ public class Product {
     @Column(name = "price")
     private BigDecimal price;
 
+    @Column(name = "image_url", nullable = false)
+    private String imageUrl;
+
     @Column(name = "stock_quantity")
     private Integer stockQuantity;
 
@@ -42,14 +45,11 @@ public class Product {
     private LocalDateTime updatedAt;
 
     @Column(name = "deleted", nullable = false)
-    private boolean deleted = false;
+    private boolean deleted;
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
-
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ProductImage> images = new HashSet<>();
 
     @OneToMany(mappedBy = "product")
     private Set<CartItem> cartItems = new HashSet<>();

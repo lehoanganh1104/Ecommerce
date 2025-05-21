@@ -7,6 +7,7 @@ import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.AuthenticationResponse;
 import com.example.demo.exception.ErrException;
 import com.example.demo.service.impl.AuthenticationService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,7 +23,7 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<AuthenticationResponse>> createToken(@RequestBody AuthenticationRequest authenticationRequest) {
+    public ResponseEntity<ApiResponse<AuthenticationResponse>> createToken(@Valid @RequestBody AuthenticationRequest authenticationRequest) {
         var response = authenticationService.login(authenticationRequest);
         return ResponseEntity.ok(ApiResponse.<AuthenticationResponse>builder()
                 .status(HttpStatus.CREATED.value())
@@ -33,7 +34,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<ApiResponse<AuthenticationResponse>> refreshToken(@RequestBody RefreshTokenRequest request) {
+    public ResponseEntity<ApiResponse<AuthenticationResponse>> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
         AuthenticationResponse response = authenticationService.refreshToken(request);
 
         return ResponseEntity.ok(

@@ -36,7 +36,7 @@ public class PaymentService implements IPaymentService {
 
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        if (!order.getCustomer().getUserName().equals(currentUsername)) {
+        if (!order.getCustomer().getUsername().equals(currentUsername)) {
             throw new AppException(ErrException.USER_ROLE_INVALID);
         }
 

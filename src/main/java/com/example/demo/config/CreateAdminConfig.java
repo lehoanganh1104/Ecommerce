@@ -21,10 +21,10 @@ public class CreateAdminConfig {
     @Bean
     ApplicationRunner applicationRunner(UserRepository userRepository){
         return args -> {
-            boolean adminExists = userRepository.existsByUserNameIgnoreCaseAndDeletedFalse("admin");
+            boolean adminExists = userRepository.existsByUsernameIgnoreCaseAndDeletedFalse("admin");
             if (!adminExists) {
                 User user = new User();
-                user.setUserName("admin");
+                user.setUsername("admin");
                 user.setPassword(passwordEncoder.encode("admin"));
                 user.setRole(User.Role.ADMIN);
                 userRepository.save(user);

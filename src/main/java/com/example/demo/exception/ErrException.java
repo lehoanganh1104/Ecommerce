@@ -13,19 +13,22 @@ public enum ErrException {
     INVALID_KEY(1001, "Invalid message key"),
     STRIPE_INTEGRATION_ERROR(1002, "Stripe integration error"),
     TOKEN_NOT_FOUND(1003, "Token not found"),
+    TOKEN_INVALID(1700, "Invalid token"),
 
     // User errors (1100–1199)
     USER_ALREADY_EXISTS(1100, "User already exists"),
     USER_NOT_FOUND(1101, "User not found"),
-    USERNAME_TOO_SHORT(1102, "Username must be at least 3 characters"),
-    PASSWORD_TOO_SHORT(1103, "Password must be at least 6 characters"),
-    PASSWORD_NOT_MATCH(1104, "Passwords do not match"),
-    PHONE_NUMBER_TOO_SHORT(1105, "Phone number must be at least 10 characters"),
-    EMAIL_TOO_SHORT(1106, "Email must be at least 10 characters"),
-    EMAIL_ALREADY_USED(1107, "Email is already used"),
-    PHONE_NUMBER_ALREADY_USED(1108, "Phone number is already used"),
-    USER_ROLE_INVALID(1109, "User role is invalid"),
-    USER_NOT_SHIPPER(1110, "User is not a shipper"),
+    USERNAME_MUST_NOT_BE_BLANK(1102, "Username must not be blank"),
+    USERNAME_TOO_SHORT(1103, "Username must be at least 3 characters"),
+    PASSWORD_MUST_NOT_BE_BLANK(1104, "Password must not be blank"),
+    PASSWORD_TOO_SHORT(1105, "Password must be at least 4 characters"),
+    PASSWORD_NOT_MATCH(1106, "Passwords do not match"),
+    PHONE_NUMBER_TOO_SHORT(1107, "Phone number must be at least 10 characters"),
+    EMAIL_TOO_SHORT(1108, "Email must be at least 10 characters"),
+    EMAIL_ALREADY_USED(1109, "Email is already used"),
+    PHONE_NUMBER_ALREADY_USED(1110, "Phone number is already used"),
+    USER_ROLE_INVALID(1111, "User role is invalid"),
+    USER_NOT_SHIPPER(1112, "User is not a shipper"),
 
     // Category errors (1200–1299)
     CATEGORY_ALREADY_EXISTS(1200, "Category name already exists"),
@@ -64,7 +67,7 @@ public enum ErrException {
     FILE_STORE_FAILED(1602, "Failed to store file"),
 
     // Token errors (1700–1799)
-    TOKEN_INVALID(1700, "Invalid token");
+
 ;
     private int code;
     private String message;
