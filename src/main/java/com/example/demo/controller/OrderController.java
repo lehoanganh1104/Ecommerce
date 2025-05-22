@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.constants.SuccessMessage;
+import com.example.demo.common.constants.SuccessMessage;
 import com.example.demo.dto.request.CreateOrderRequest;
 import com.example.demo.dto.request.UpdateOrderRequest;
 import com.example.demo.dto.response.ApiResponse;
@@ -26,12 +26,14 @@ public class OrderController {
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<OrderResponse>> createOrder(@RequestBody CreateOrderRequest request) {
         OrderResponse response = orderService.createOrder(request);
-        return ResponseEntity.ok(ApiResponse.<OrderResponse>builder()
-                .status(HttpStatus.CREATED.value())
-                .message(SuccessMessage.ORDER_CREATED)
-                .data(response)
-                .build()
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.<OrderResponse>builder()
+                        .status(HttpStatus.CREATED.value())
+                        .message(SuccessMessage.ORDER_CREATED)
+                        .data(response)
+                        .build()
         );
+
     }
 
     @GetMapping

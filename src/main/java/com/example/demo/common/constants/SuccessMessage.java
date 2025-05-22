@@ -1,4 +1,4 @@
-package com.example.demo.constants;
+package com.example.demo.common.constants;
 
 public class SuccessMessage {
     // General
@@ -37,7 +37,7 @@ public class SuccessMessage {
     public static final String ORDER_FETCHED = "Order fetched successfully";
 
     // Payment
-    public static final String PAYMENT_SUCCESSFUL = "Payment completed successfully";
+    public static final String PAYMENT_SUCCESS = "Payment completed successfully";
     public static final String PAYMENT_CREATED = "Payment created successfully";
     public static final String PAYMENTS_FETCHED = "Payments fetched successfully";
     public static final String PAYMENT_FETCHED = "Payment fetched successfully";

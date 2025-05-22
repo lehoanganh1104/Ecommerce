@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.constants.SuccessMessage;
+import com.example.demo.common.constants.SuccessMessage;
 import com.example.demo.dto.request.CreateCategoryRequest;
 import com.example.demo.dto.request.UpdateCategoryRequest;
 import com.example.demo.dto.response.ApiResponse;

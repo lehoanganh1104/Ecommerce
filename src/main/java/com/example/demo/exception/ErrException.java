@@ -24,11 +24,13 @@ public enum ErrException {
     PASSWORD_TOO_SHORT(1105, "Password must be at least 4 characters"),
     PASSWORD_NOT_MATCH(1106, "Passwords do not match"),
     PHONE_NUMBER_TOO_SHORT(1107, "Phone number must be at least 10 characters"),
-    EMAIL_TOO_SHORT(1108, "Email must be at least 10 characters"),
-    EMAIL_ALREADY_USED(1109, "Email is already used"),
-    PHONE_NUMBER_ALREADY_USED(1110, "Phone number is already used"),
-    USER_ROLE_INVALID(1111, "User role is invalid"),
-    USER_NOT_SHIPPER(1112, "User is not a shipper"),
+    PHONE_NUMBER_MUST_NOT_BE_BLANK(1108, "Phone number must not be blank"),
+    EMAIL_MUST_NOT_BE_BLANK(1109, "Email must not be blank"),
+    EMAIL_TOO_SHORT(1110, "Email must be at least 10 characters"),
+    EMAIL_ALREADY_USED(1111, "Email is already used"),
+    PHONE_NUMBER_ALREADY_USED(1112, "Phone number is already used"),
+    USER_ROLE_INVALID(1113, "User role is invalid"),
+    USER_NOT_SHIPPER(1114, "User is not a shipper"),
 
     // Category errors (1200–1299)
     CATEGORY_ALREADY_EXISTS(1200, "Category name already exists"),
@@ -60,6 +62,11 @@ public enum ErrException {
     PAYMENT_PROCESSING_FAILED(1501, "Payment processing failed"),
     PAYMENT_NOT_COMPLETED(1502, "Payment not completed"),
     PAYMENT_INTENT_ID_NULL(1503, "PaymentIntent ID must not be null"),
+    UNSUPPORTED_PAYMENT_METHOD(1504, "Unsupported payment method"),
+    VNPAY_MISSING_SECURE_HASH(1505, "Missing vnp_SecureHash"),
+    VNPAY_CHECKSUM_INVALID(1506, "Checksum verification failed"),
+    VNPAY_INVALID_MERCHANT_CODE(1507, "Invalid merchant code"),
+    VNPAY_AMOUNT_MISMATCH(1508, "Amount mismatch"),
 
     // File errors (1600–1699)
     FILE_NOT_PROVIDED(1600, "No file provided"),

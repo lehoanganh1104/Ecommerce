@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.constants.SuccessMessage;
+import com.example.demo.common.constants.SuccessMessage;
 import com.example.demo.dto.request.CreateUserRequest;
 import com.example.demo.dto.request.UpdateRoleRequest;
 import com.example.demo.dto.request.UpdateUserRequest;
@@ -65,6 +65,17 @@ public class UserController {
                 .data(response)
                 .build()
             );
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<ApiResponse<UserResponse>> updateMyInfo(@Valid @RequestBody UpdateUserRequest request) {
+        UserResponse response = userService.updateCurrentUser(request);
+        return ResponseEntity.ok(ApiResponse.<UserResponse>builder()
+                .status(HttpStatus.OK.value())
+                .message(SuccessMessage.USER_UPDATED)
+                .data(response)
+                .build()
+        );
     }
 
     @GetMapping("/me")

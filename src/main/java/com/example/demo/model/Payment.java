@@ -38,7 +38,7 @@ public class Payment {
     private LocalDateTime updatedAt;
 
     @Column(name = "deleted", nullable = false)
-    private boolean deleted = false;
+    private boolean deleted;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_status", nullable = false)
@@ -47,10 +47,23 @@ public class Payment {
     @Column(name = "stripe_payment_intent_id", unique = true)
     private String stripePaymentIntentId;
 
+    @Column(name = "vnp_transaction_no", unique = true)
+    private String vnpTransactionNo;
+
+    @Column(name = "vnp_response_code")
+    private String vnpResponseCode;
+
+    @Column(name = "vnp_bank_code")
+    private String vnpBankCode;
+
+    @Column(name = "vnp_card_type")
+    private String vnpCardType;
+
     public enum PaymentMethod {
         CREDIT_CARD,
         PAYPAL,
         BANK_TRANSFER,
+        VNPAY,
         COD
     }
 

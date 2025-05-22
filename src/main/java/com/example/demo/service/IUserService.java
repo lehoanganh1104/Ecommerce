@@ -14,6 +14,7 @@ public interface IUserService {
     UserResponse updateUserRole(Long userId, UpdateRoleRequest request);
     UserResponse uploadUserImage(MultipartFile file);
     UserResponse getCurrentUser();
+    UserResponse updateCurrentUser(UpdateUserRequest request);
     Page<UserResponse> getAllUser(String search, Pageable pageable);
     void deleteUser(Long id);
     UserResponse getUserById(Long id);

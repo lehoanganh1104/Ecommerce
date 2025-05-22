@@ -8,6 +8,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface IUserMapper {
+    @Mapping(target = "role", source = "role")
     UserResponse toUserResponse(User User);
 
     @Mapping(target = "id", ignore = true)

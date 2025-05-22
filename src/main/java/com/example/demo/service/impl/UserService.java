@@ -55,13 +55,15 @@ public class UserService implements IUserService {
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
-    @PreAuthorize("returnObject.userName == authentication.name or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public UserResponse updateUser(Long id, UpdateUserRequest request) {
         User user = userRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new AppException(ErrException.USER_NOT_FOUND));
 
-        if (!request.getEmail().equals(user.getEmail())) {
+        // Check and update
+        if (request.getEmail() != null && !request.getEmail().isBlank()
+                && !request.getEmail().equals(user.getEmail())) {
             boolean existsEmail = userRepository.existsByEmailAndDeletedFalse(request.getEmail());
             if (existsEmail) {
                 throw new AppException(ErrException.EMAIL_ALREADY_USED);
@@ -69,21 +71,27 @@ public class UserService implements IUserService {
             user.setEmail(request.getEmail());
         }
 
-        if (!request.getPhoneNumber().equals(user.getPhoneNumber())) {
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        if (request.getFullName() != null && !request.getFullName().isBlank()) {
+            user.setFullName(request.getFullName());
+        }
+        if (request.getPhoneNumber() != null && !request.getPhoneNumber().isBlank()
+                && !request.getPhoneNumber().equals(user.getPhoneNumber())) {
             boolean existsPhone = userRepository.existsByPhoneNumberAndDeletedFalse(request.getPhoneNumber());
             if (existsPhone) {
-                throw new AppException(ErrException. PHONE_NUMBER_ALREADY_USED);
+                throw new AppException(ErrException.PHONE_NUMBER_ALREADY_USED);
             }
             user.setPhoneNumber(request.getPhoneNumber());
         }
 
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setFullName(request.getFullName());
-        user.setPhoneNumber(request.getPhoneNumber());
-        user.setAddress(request.getAddress());
+        if (request.getAddress() != null && !request.getAddress().isBlank()) {
+            user.setAddress(request.getAddress());
+        }
 
         User updatedUser = userRepository.save(user);
-
         return userMapper.toUserResponse(updatedUser);
     }
 
@@ -96,6 +104,48 @@ public class UserService implements IUserService {
 
         User updatedUser = userRepository.save(user);
 
+        return userMapper.toUserResponse(updatedUser);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @Override
+    public UserResponse updateCurrentUser(UpdateUserRequest request) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsernameIgnoreCaseAndDeletedFalse(username)
+                .orElseThrow(() -> new AppException(ErrException.USER_NOT_FOUND));
+
+        if (request.getEmail() != null && !request.getEmail().isBlank()
+                && !request.getEmail().equals(user.getEmail())) {
+            boolean existsEmail = userRepository.existsByEmailAndDeletedFalse(request.getEmail());
+            if (existsEmail) {
+                throw new AppException(ErrException.EMAIL_ALREADY_USED);
+            }
+            user.setEmail(request.getEmail());
+        }
+
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        if (request.getFullName() != null && !request.getFullName().isBlank()) {
+            user.setFullName(request.getFullName());
+        }
+
+        if (request.getPhoneNumber() != null && !request.getPhoneNumber().isBlank()
+                && !request.getPhoneNumber().equals(user.getPhoneNumber())) {
+            boolean existsPhone = userRepository.existsByPhoneNumberAndDeletedFalse(request.getPhoneNumber());
+            if (existsPhone) {
+                throw new AppException(ErrException.PHONE_NUMBER_ALREADY_USED);
+            }
+            user.setPhoneNumber(request.getPhoneNumber());
+        }
+
+        if (request.getAddress() != null && !request.getAddress().isBlank()) {
+            user.setAddress(request.getAddress());
+        }
+
+        User updatedUser = userRepository.save(user);
         return userMapper.toUserResponse(updatedUser);
     }
 
