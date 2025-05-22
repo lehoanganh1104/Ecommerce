@@ -14,19 +14,9 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateProductRequest {
-    @NotBlank(message = "PRODUCT_INVALID_NAME")
     private String name;
-
     private String description;
-
-    @NotNull(message = "PRODUCT_INVALID_PRICE")
-    @DecimalMin(value = "0.0", inclusive = false, message = "PRODUCT_INVALID_PRICE")
     private BigDecimal price;
-
-    @NotNull(message = "PRODUCT_INVALID_STOCK")
-    @Min(value = 0, message = "PRODUCT_INVALID_STOCK")
     private Integer stockQuantity;
-
-    @NotNull(message = "PRODUCT_CATEGORY_NOT_FOUND")
     private Long categoryId;
 }

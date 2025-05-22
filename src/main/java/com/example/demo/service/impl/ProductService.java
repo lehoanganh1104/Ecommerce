@@ -20,6 +20,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -41,6 +43,7 @@ public class ProductService implements IProductService {
 
         Product product = productMapper.toProduct(request);
         product.setCategory(category);
+        product.setImageUrl(null);
 
         Product savedProduct = productRepository.save(product);
         return productMapper.toProductResponse(savedProduct);
@@ -52,17 +55,34 @@ public class ProductService implements IProductService {
         Product product = productRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new AppException(ErrException.PRODUCT_NOT_FOUND));
 
-        if (productRepository.existsByNameIgnoreCaseAndDeletedFalse(request.getName())
+        if (request.getName() != null && !request.getName().isBlank()
                 && !product.getName().equalsIgnoreCase(request.getName())) {
-            throw new AppException(ErrException.PRODUCT_ALREADY_EXISTS);
+            if (productRepository.existsByNameIgnoreCaseAndDeletedFalse(request.getName())) {
+                throw new AppException(ErrException.PRODUCT_ALREADY_EXISTS);
+            }
+            product.setName(request.getName());
         }
 
-        product.setName(request.getName());
-        product.setDescription(request.getDescription());
-        product.setPrice(request.getPrice());
-        product.setStockQuantity(request.getStockQuantity());
+        if (request.getDescription() != null && !request.getDescription().equals(product.getDescription())) {
+            product.setDescription(request.getDescription());
+        }
 
-        if (!product.getCategory().getId().equals(request.getCategoryId())) {
+        if (request.getPrice() != null && product.getPrice().compareTo(request.getPrice()) != 0) {
+            if (request.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+                throw new AppException(ErrException.PRODUCT_PRICE_INVALID);
+            }
+            product.setPrice(request.getPrice());
+        }
+
+        if (request.getStockQuantity() != null && !request.getStockQuantity().equals(product.getStockQuantity())) {
+            if (request.getStockQuantity() < 0) {
+                throw new AppException(ErrException.PRODUCT_STOCK_INVALID);
+            }
+            product.setStockQuantity(request.getStockQuantity());
+        }
+
+        // categoryId nullable, nếu khác null và khác thì cập nhật
+        if (request.getCategoryId() != null && !request.getCategoryId().equals(product.getCategory().getId())) {
             Category category = categoryRepository.findByIdAndDeletedFalse(request.getCategoryId())
                     .orElseThrow(() -> new AppException(ErrException.PRODUCT_CATEGORY_NOT_FOUND));
             product.setCategory(category);

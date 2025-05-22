@@ -17,7 +17,6 @@ public class ProductResponse {
     private String description;
     private BigDecimal price;
     private Integer stockQuantity;
-    private String status;
     private boolean deleted;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
