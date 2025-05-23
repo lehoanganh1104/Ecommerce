@@ -62,7 +62,7 @@ public enum ErrException {
     PAYMENT_PROCESSING_FAILED(1501, "Payment processing failed"),
     PAYMENT_NOT_COMPLETED(1502, "Payment not completed"),
     PAYMENT_INTENT_ID_NULL(1503, "PaymentIntent ID must not be null"),
-    UNSUPPORTED_PAYMENT_METHOD(1504, "Unsupported payment method"),
+    PAYMENT_METHOD_NOT_SUPPORTED(1504, "Unsupported payment method"),
     VNPAY_MISSING_SECURE_HASH(1505, "Missing vnp_SecureHash"),
     VNPAY_CHECKSUM_INVALID(1506, "Checksum verification failed"),
     VNPAY_INVALID_MERCHANT_CODE(1507, "Invalid merchant code"),

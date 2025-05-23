@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -23,6 +24,8 @@ public class Payment {
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
+
+    private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
@@ -60,10 +63,9 @@ public class Payment {
     private String vnpCardType;
 
     public enum PaymentMethod {
-        CREDIT_CARD,
-        PAYPAL,
-        BANK_TRANSFER,
+        STRIPE,
         VNPAY,
+        CREDIT_CARD,
         COD
     }
 

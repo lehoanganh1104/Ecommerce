@@ -1,15 +1,15 @@
 package com.example.demo.config;
 
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@ConfigurationProperties(prefix = "stripe")
 @Getter
+@Setter
 public class StripeConfig {
-    @Value("${stripe.api.key}")
     private String apiKey;
-
-    @Value("${stripe.webhook.secret}")
     private String webhookSecret;
 }
