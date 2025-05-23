@@ -1,6 +1,5 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.response.PaymentResponse;
 import com.example.demo.model.Payment;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
