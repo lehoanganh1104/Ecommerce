@@ -15,4 +15,5 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     Page<Payment> findByOrderIdContainingAndDeletedFalse(String orderId, Pageable pageable);
     Optional<Payment> findByVnpTransactionNo(String vnpTransactionNo);
     Optional<Payment> findByStripePaymentIntentId(String paymentIntentId);
+    Optional<Payment> findByVnpTxnRef(String vnpTxnRef);
 }

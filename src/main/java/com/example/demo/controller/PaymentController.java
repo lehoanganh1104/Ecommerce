@@ -6,7 +6,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/v1/payments")
@@ -26,6 +28,12 @@ public class PaymentController {
     @PostMapping("/callback/{method}")
     public void handleCallback(@PathVariable String method,
                                HttpServletRequest request) {
-        paymentService.handleCallback(method, request);
+        Payment.PaymentMethod paymentMethod;
+        try {
+            paymentMethod = Payment.PaymentMethod.valueOf(method.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid payment method");
+        }
+        paymentService.handleCallback(paymentMethod.name(), request);
     }
 }

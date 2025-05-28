@@ -22,10 +22,10 @@ public class VNPayConfig {
     public String buildPaymentUrl(Order order, String ipAddress) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         String vnpCreateDate = LocalDateTime.now().format(formatter);
-        String vnpExpireDate = LocalDateTime.now().plusMinutes(15).format(formatter); // thêm thời gian hết hạn
+        String vnpExpireDate = LocalDateTime.now().plusMinutes(15).format(formatter);
         String vnpTxnRef = String.valueOf(System.currentTimeMillis());
 
-        long amount = order.getTotalAmount().multiply(BigDecimal.valueOf(100)).longValue(); // VND × 100
+        long amount = order.getTotalAmount().multiply(BigDecimal.valueOf(100)).longValue(); // VND * 100
 
         Map<String, String> vnpParams = new HashMap<>();
         vnpParams.put("vnp_Version", "2.1.0");
@@ -42,26 +42,35 @@ public class VNPayConfig {
         vnpParams.put("vnp_ExpireDate", vnpExpireDate);
         vnpParams.put("vnp_OrderType", "other");
 
-        // Sắp xếp tham số
+        // Sắp xếp
         SortedMap<String, String> sortedParams = new TreeMap<>(vnpParams);
 
-        // Tạo chuỗi để ký – loại bỏ vnp_SecureHash
+        // Tạo chuỗi hash (không encode)
         StringBuilder hashData = new StringBuilder();
         for (Map.Entry<String, String> entry : sortedParams.entrySet()) {
             hashData.append(entry.getKey()).append('=').append(entry.getValue()).append('&');
         }
         hashData.deleteCharAt(hashData.length() - 1);
 
-        // Tạo chữ ký
+        // Chữ ký
         String secureHash = VNPayHelper.hmacSHA512(vnPayProperties.getSecretKey().trim(), hashData.toString());
 
-        // Gắn chữ ký vào query URL (có encode)
+        sortedParams.put("vnp_SecureHash", secureHash);
+        sortedParams.put("vnp_SecureHashType", "SHA512");
+
         StringBuilder query = new StringBuilder();
         for (Map.Entry<String, String> entry : sortedParams.entrySet()) {
             query.append(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8)).append('=')
                     .append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8)).append('&');
         }
+        query.deleteCharAt(query.length() - 1);
 
-        return vnPayProperties.getPayUrl() + "?" + query.toString();
+        String paymentUrl = vnPayProperties.getPayUrl() + "?" + query;
+
+        System.out.println("Hash data: " + hashData);
+        System.out.println("Secure hash: " + secureHash);
+        System.out.println("Payment URL: " + paymentUrl);
+
+        return paymentUrl;
     }
 }

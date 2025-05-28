@@ -67,6 +67,7 @@ public enum ErrException {
     VNPAY_CHECKSUM_INVALID(1506, "Checksum verification failed"),
     VNPAY_INVALID_MERCHANT_CODE(1507, "Invalid merchant code"),
     VNPAY_AMOUNT_MISMATCH(1508, "Amount mismatch"),
+    INVALID_SIGNATURE(1509, "Invalid signature"),
 
     // File errors (1600–1699)
     FILE_NOT_PROVIDED(1600, "No file provided"),

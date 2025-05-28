@@ -53,6 +53,9 @@ public class Payment {
     @Column(name = "vnp_transaction_no", unique = true)
     private String vnpTransactionNo;
 
+    @Column(name = "vnp_txn_ref", unique = true)
+    private String vnpTxnRef;
+
     @Column(name = "vnp_response_code")
     private String vnpResponseCode;
 
